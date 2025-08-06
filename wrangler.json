@@ -1,0 +1,15 @@
+{
+  "name": "siegecmd-site",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-06-20",
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [
+    "https://siegecmd.net/*"
+  ]
+}
