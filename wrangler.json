@@ -7,9 +7,15 @@
   },
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "not_found_handling": "none",
+    "binding": "ASSETS"
   },
-  "routes": [
-    "https://siegecmd.net/*"
+  "routes": ["https://siegecmd.net/api/*", "https://siegecmd.net/*"],
+  "kv_namespaces": [
+    {
+      "binding": "TYPING_WORDS",
+      "id": "89c81c91509744bbb8c3dba8b8f6b3d0",
+      "remote": true
+    }
   ]
 }
