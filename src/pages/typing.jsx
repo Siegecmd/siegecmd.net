@@ -12,7 +12,7 @@ const SIZE_OPTIONS = [10, 30, 50, 100];
 
 export default function TypingTest() {
   const [verified, setVerified] = useState(false);
-  const backgroundUrl = "/bg.svg";
+  const backgroundUrl = "/bg.webp";
 
   const [testSize, setTestSize] = useState(50);
   const [tick, setTick] = useState(0);
@@ -29,6 +29,7 @@ export default function TypingTest() {
   const [endedAt, setEndedAt] = useState(null);
 
   const inputRef = useRef(null);
+  const bgRef = useRef(null);
 
   const finished =
     endedAt !== null || (words.length > 0 && currentIndex >= words.length);
@@ -118,6 +119,63 @@ export default function TypingTest() {
     return () => clearInterval(id);
   }, [startedAt, endedAt]);
 
+  useEffect(() => {
+    const el = bgRef.current;
+    if (!el) return;
+
+    const mql =
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (mql && mql.matches) {
+      el.style.backgroundPosition = "50% 50%";
+      return;
+    }
+
+    let raf = 0;
+    let targetX = 50;
+    let targetY = 50;
+    let currentX = 50;
+    let currentY = 50;
+
+    const strength = 3;
+    const alpha = 0.12;
+
+    const tickFrame = () => {
+      raf = 0;
+      currentX = currentX + (targetX - currentX) * alpha;
+      currentY = currentY + (targetY - currentY) * alpha;
+      el.style.backgroundPosition = `${currentX}% ${currentY}%`;
+
+      if (
+        Math.abs(targetX - currentX) > 0.01 ||
+        Math.abs(targetY - currentY) > 0.01
+      ) {
+        raf = requestAnimationFrame(tickFrame);
+      }
+    };
+
+    const onMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+
+      targetX = 50 + (x - 0.5) * (strength * 2);
+      targetY = 50 + (y - 0.5) * (strength * 2);
+
+      if (!raf) raf = requestAnimationFrame(tickFrame);
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    el.style.backgroundPosition = "50% 50%";
+
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   function submitWord(raw) {
     if (finished || words.length === 0) return;
 
@@ -196,8 +254,14 @@ export default function TypingTest() {
 
   return (
     <div
+      ref={bgRef}
       className="h-screen overflow-x-hidden bg-black bg-cover bg-center font-sans text-white flex flex-col"
-      style={{ backgroundImage: `url(${backgroundUrl})` }}
+      style={{
+        backgroundImage: `url(${backgroundUrl})`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "50% 50%",
+      }}
     >
       <style>{`
         @keyframes caretblink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
@@ -239,8 +303,8 @@ export default function TypingTest() {
                         onClick={() => setTestSize(n)}
                         className={`px-3 py-2 rounded-xl border transition ${
                           active
-                            ? "bg-white/15 border-white/30"
-                            : "bg-black/20 border-white/10 hover:bg-white/10"
+                            ? "bg-black/30 border-black/50"
+                            : "bg-black/20 border-black/30 hover:bg-black/30"
                         }`}
                       >
                         {n}
@@ -251,14 +315,14 @@ export default function TypingTest() {
 
                 <button
                   onClick={restartRunNewWords}
-                  className="px-4 py-2 border rounded-xl bg-black/20 hover:bg-white/10 transition"
+                  className="px-4 py-2 border border-black/40 rounded-xl bg-black/20 hover:bg-black/30 transition"
                 >
                   Restart
                 </button>
               </div>
             </div>
 
-            <div className="border rounded-xl p-4 min-h-[120px]">
+            <div className="border border-black/40 rounded-xl p-4 min-h-[120px] bg-black/20">
               {wordsError ? (
                 <div className="text-red-400">{wordsError}</div>
               ) : (
@@ -300,7 +364,7 @@ export default function TypingTest() {
               spellCheck={false}
               autoCapitalize="none"
               autoCorrect="off"
-              className="w-full mt-4 px-4 py-3 rounded-xl bg-black/40 border"
+              className="w-full mt-4 px-4 py-3 rounded-xl bg-black/40 border border-black/50 focus:outline-none focus:border-black/70"
             />
           </div>
         )}
