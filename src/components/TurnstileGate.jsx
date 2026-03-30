@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from "react";
 
+const isDev = import.meta.env.DEV;
+
 export default function TurnstileGate({
   onVerifySuccess,
   siteKey = "0x4AAAAAABhwHiKqDAntk13M", // public
@@ -8,6 +10,14 @@ export default function TurnstileGate({
   const widgetRef = useRef(null);
 
   useEffect(() => {
+    // Skip Turnstile in development mode
+    if (isDev) {
+      if (onVerifySuccess) {
+        onVerifySuccess();
+      }
+      return;
+    }
+
     const existing = document.querySelector(
       'script[src*="challenges.cloudflare.com/turnstile"]'
     );
@@ -48,5 +58,11 @@ export default function TurnstileGate({
 
     return () => clearInterval(checkReady);
   }, [onVerifySuccess, siteKey]);
+
+  // Don't render anything in dev mode
+  if (isDev) {
+    return null;
+  }
+
   return <div ref={widgetRef} className={`cf-turnstile ${className}`}></div>;
 }
