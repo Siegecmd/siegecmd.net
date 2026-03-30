@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/Navbar";
+import ASCIIText from "../components/ASCIIText";
+import Dither from "../components/Dither";
 import GithubIcon from "../img/github.svg?react";
 import HtbIcon from "../img/hackthebox.svg?react";
 import XIcon from "../img/x.svg?react";
-import TypingText from "../components/TypingAnim";
+import { useAnimation } from "../context/AnimationContext";
 
 export default function Home() {
-  const containerRef = useRef(null);
-  const backgroundUrl = "/bg.webp";
+  const { animationEnabled } = useAnimation();
 
   useEffect(() => {
     const existing = document.querySelector(
@@ -21,90 +22,100 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 10;
-      const y = (e.clientY / window.innerHeight - 0.5) * 10;
-      if (containerRef.current) {
-        containerRef.current.style.backgroundPosition = `calc(50% + ${x}%) calc(50% + ${y}%)`;
-      }
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
   return (
-    <div
-      ref={containerRef}
-      className="h-screen bg-black bg-cover bg-center font-sans text-white transition-all duration-100 ease-out flex flex-col"
-      style={{
-        backgroundColor: "#000",
-        backgroundImage: `url(${backgroundUrl})`,
-        backgroundPosition: "50% 50%",
-      }}
-    >
-      <Navbar />
+    <div className="h-screen bg-black font-sans text-white flex flex-col relative overflow-hidden">
+      {/* Dither Background */}
+      <Dither
+        waveColor={[0.2196078431372549, 0.2196078431372549, 0.2196078431372549]}
+        disableAnimation={!animationEnabled}
+        enableMouseInteraction={animationEnabled}
+        mouseRadius={0.3}
+        colorNum={3}
+        pixelSize={2}
+        waveAmplitude={0.3}
+        waveFrequency={3}
+        waveSpeed={0.05}
+      />
 
-      <div className="flex-grow flex items-center justify-center">
-        <div className="max-w-md w-full flex flex-col items-center">
-          <div className="bg-glass-black border border-glass backdrop-blur-sm rounded-2xl p-8 w-full text-white shadow-glass text-center">
-            <h1 className="text-4xl font-bold mb-4">siegecmd.net</h1>
+      {/* Vignette Overlay */}
+      <div className="vignette" />
 
-            <div className="text-lg mb-6 relative">
-              <div className="opacity-0 pointer-events-none select-none leading-relaxed">
-                Sometimes I make things, most times I break things.
-                <br />
-                Security Engineer @ Cloudflare
-              </div>
+      {/* Content */}
+      <div className="relative z-10 flex flex-col h-full">
+        <Navbar />
 
-              <div className="absolute inset-0">
-                <TypingText
-                  text={[
-                    "Sometimes I make things, most times I break things.",
-                    "Security Engineer @ Cloudflare",
-                  ]}
-                  typingSpeed={60}
-                  showCursor={true}
-                  cursorCharacter="|"
-                  className="leading-relaxed"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-center gap-8 mb-6">
-              <a
-                href="https://github.com/siegecmd"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GithubIcon className="h-8 w-8 fill-white hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://app.hackthebox.com/profile/769674"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <HtbIcon className="h-8 w-8 fill-white hover:scale-110 transition-transform" />
-              </a>
-              <a
-                href="https://x.com/siegecmd"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <XIcon className="h-8 w-8 fill-white hover:scale-110 transition-transform" />
-              </a>
-            </div>
-
-            <div
-              className="cf-turnstile"
-              data-sitekey="0x4AAAAAABhwHiKqDAntk13M"
-              data-callback="onTurnstileSuccess"
-              data-theme="dark"
-              data-size="invisible"
-            ></div>
+        <div className="flex-grow flex flex-col items-center justify-center">
+          {/* ASCII Text Container */}
+          <div className="relative w-full h-72 md:h-96">
+            <ASCIIText
+              text="siegecmd"
+              asciiFontSize={12}
+              textFontSize={300}
+              textColor="#fdf9f3"
+              planeBaseHeight={12}
+              enableWaves={false}
+            />
           </div>
+
+          {/* Icons */}
+          <div className="flex justify-center gap-8 mt-8">
+            <a
+              href="https://github.com/siegecmd"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-110 transition-transform duration-300"
+            >
+              <GithubIcon className="h-10 w-10 fill-white drop-shadow-glow" />
+            </a>
+            <a
+              href="https://app.hackthebox.com/profile/769674"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-110 transition-transform duration-300"
+            >
+              <HtbIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
+            </a>
+            <a
+              href="https://x.com/siegecmd"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:scale-110 transition-transform duration-300"
+            >
+              <XIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
+            </a>
+          </div>
+
+          {/* Title underneath icons */}
+          <p className="mt-6 text-lg text-white/80 tracking-wide">
+            Security Engineer @ Cloudflare
+          </p>
+
+          <div
+            className="cf-turnstile"
+            data-sitekey="0x4AAAAAABhwHiKqDAntk13M"
+            data-callback="onTurnstileSuccess"
+            data-theme="dark"
+            data-size="invisible"
+          ></div>
         </div>
       </div>
+
+      <style>{`
+        .drop-shadow-glow {
+          filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+        }
+        
+        .vignette {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+          z-index: 20;
+        }
+      `}</style>
     </div>
   );
 }
