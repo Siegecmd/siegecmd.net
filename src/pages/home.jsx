@@ -57,38 +57,40 @@ export default function Home() {
             />
           </div>
 
-          {/* Icons */}
-          <div className="flex justify-center gap-8 mt-8">
-            <a
-              href="https://github.com/siegecmd"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <GithubIcon className="h-10 w-10 fill-white drop-shadow-glow" />
-            </a>
-            <a
-              href="https://app.hackthebox.com/profile/769674"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <HtbIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
-            </a>
-            <a
-              href="https://x.com/siegecmd"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:scale-110 transition-transform duration-300"
-            >
-              <XIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
-            </a>
-          </div>
+          {/* Icons and Title with vignette */}
+          <div className="relative flex flex-col items-center icons-vignette-container">
+            <div className="flex justify-center gap-8 mt-8">
+              <a
+                href="https://github.com/siegecmd"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <GithubIcon className="h-10 w-10 fill-white drop-shadow-glow" />
+              </a>
+              <a
+                href="https://app.hackthebox.com/profile/769674"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <HtbIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
+              </a>
+              <a
+                href="https://x.com/siegecmd"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:scale-110 transition-transform duration-300"
+              >
+                <XIcon className="h-10 w-10 text-white fill-white drop-shadow-glow" />
+              </a>
+            </div>
 
-          {/* Title underneath icons */}
-          <p className="mt-6 text-lg text-white/80 tracking-wide">
-            Security Engineer @ Cloudflare
-          </p>
+            {/* Title underneath icons */}
+            <p className="mt-6 text-lg text-white/80 tracking-wide">
+              Security Engineer @ Cloudflare
+            </p>
+          </div>
 
           <div
             className="cf-turnstile"
@@ -114,6 +116,12 @@ export default function Home() {
           pointer-events: none;
           background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
           z-index: 20;
+        }
+        
+        .icons-vignette-container {
+          padding: 2rem 3rem;
+          background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 80%);
+          border-radius: 50%;
         }
       `}</style>
     </div>
