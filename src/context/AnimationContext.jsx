@@ -4,7 +4,6 @@ const AnimationContext = createContext();
 
 export function AnimationProvider({ children }) {
   const [animationEnabled, setAnimationEnabled] = useState(() => {
-    // Check localStorage for saved preference
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("animationEnabled");
       return saved !== null ? JSON.parse(saved) : true;
@@ -13,7 +12,6 @@ export function AnimationProvider({ children }) {
   });
 
   useEffect(() => {
-    // Persist to localStorage
     localStorage.setItem("animationEnabled", JSON.stringify(animationEnabled));
   }, [animationEnabled]);
 

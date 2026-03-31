@@ -64,7 +64,7 @@ class AsciiFilter {
     this.domElement.appendChild(this.pre);
 
     this.canvas = document.createElement("canvas");
-    this.context = this.canvas.getContext("2d");
+    this.context = this.canvas.getContext("2d", { willReadFrequently: true });
     this.domElement.appendChild(this.canvas);
 
     this.deg = 0;

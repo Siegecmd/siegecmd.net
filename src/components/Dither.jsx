@@ -281,7 +281,13 @@ export default function Dither({
       className="dither-canvas"
       camera={{ position: [0, 0, 6] }}
       dpr={1}
-      gl={{ antialias: true, preserveDrawingBuffer: true }}
+      gl={{
+        antialias: true,
+        preserveDrawingBuffer: true,
+      }}
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x000000, 1);
+      }}
       style={{
         position: "absolute",
         top: 0,
