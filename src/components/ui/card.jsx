@@ -7,9 +7,9 @@ function Card({ className, variant = "default", size = "default", ...props }) {
       data-slot="card"
       data-size={size}
       className={cn(
-        "group/card flex flex-col overflow-hidden rounded-xl text-sm text-white",
+        "group/card flex flex-col overflow-hidden text-sm text-white",
         variant === "glass" &&
-          "bg-black/60 border border-black/30 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.1)]",
+          "bg-black/30 border border-white/20 backdrop-blur-sm shadow-[0_4px_30px_rgba(0,0,0,0.1)]",
         variant === "default" &&
           "bg-card text-card-foreground ring-1 ring-foreground/10",
         "gap-4 py-4",
