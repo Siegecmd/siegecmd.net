@@ -28,6 +28,20 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      // Fade out over the first 40% of viewport scroll
+      const fadeEnd = windowHeight * 0.4;
+      const opacity = Math.max(0, 1 - scrollY / fadeEnd);
+      setHeroOpacity(opacity);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const glitchOptions = {
     playMode: "hover",
     createContainers: true,
@@ -48,6 +62,8 @@ export default function Home() {
   const htbGlitch = useGlitch(glitchOptions);
   const xGlitch = useGlitch(glitchOptions);
 
+  const [backgroundReady, setBackgroundReady] = useState(false);
+  const [heroOpacity, setHeroOpacity] = useState(1);
   const [testSize, setTestSize] = useState(50);
   const [tick, setTick] = useState(0);
   const [words, setWords] = useState([]);
@@ -265,72 +281,85 @@ export default function Home() {
           waveAmplitude={0.3}
           waveFrequency={3}
           waveSpeed={0.05}
+          onReady={() => setBackgroundReady(true)}
         />
       </div>
 
       <div className="vignette" />
+
+      {/* Loading overlay - fades out once background is ready */}
+      <div
+        className={`fixed inset-0 z-[100] bg-black transition-opacity duration-500 pointer-events-none ${
+          backgroundReady ? "opacity-0" : "opacity-100"
+        }`}
+      />
       <div ref={turnstileRef} className="cf-turnstile hidden" />
 
       <section className="relative z-10 h-screen flex flex-col items-center justify-center">
-        <div className="relative w-full h-72 md:h-96">
-          <ASCIIText
-            text="siegecmd"
-            asciiFontSize={12}
-            textFontSize={300}
-            textColor="#fdf9f3"
-            planeBaseHeight={12}
-            enableWaves={false}
-          />
-        </div>
-
-        <div className="relative flex flex-col items-center icons-vignette-container">
-          <div className="flex justify-center gap-8 mt-8">
-            <a
-              href="https://github.com/siegecmd"
-              target="_blank"
-              rel="noopener noreferrer"
-              ref={githubGlitch.ref}
-              className="icon-glitch"
-            >
-              <GithubIcon className="h-10 w-10 fill-white" />
-            </a>
-            <a
-              href="https://app.hackthebox.com/profile/769674"
-              target="_blank"
-              rel="noopener noreferrer"
-              ref={htbGlitch.ref}
-              className="icon-glitch"
-            >
-              <HtbIcon className="h-10 w-10 fill-white" />
-            </a>
-            <a
-              href="https://x.com/siegecmd"
-              target="_blank"
-              rel="noopener noreferrer"
-              ref={xGlitch.ref}
-              className="icon-glitch"
-            >
-              <XIcon className="h-10 w-10 fill-white" />
-            </a>
+        <div
+          style={{ opacity: heroOpacity }}
+          className="w-full flex flex-col items-center transition-opacity duration-100"
+        >
+          <div className="relative w-full h-72 md:h-96">
+            <ASCIIText
+              text="siegecmd"
+              asciiFontSize={12}
+              textFontSize={300}
+              textColor="#fdf9f3"
+              planeBaseHeight={12}
+              enableWaves={false}
+            />
           </div>
 
-          <p className="mt-6 text-lg text-white/80 tracking-wide">
-            Security Engineer @ Cloudflare
-          </p>
-        </div>
+          <div className="relative flex flex-col items-center">
+            <div className="flex justify-center gap-8 mt-8">
+              <a
+                href="https://github.com/siegecmd"
+                target="_blank"
+                rel="noopener noreferrer"
+                ref={githubGlitch.ref}
+                className="icon-glitch"
+              >
+                <GithubIcon className="h-10 w-10 fill-white" />
+              </a>
+              <a
+                href="https://app.hackthebox.com/profile/769674"
+                target="_blank"
+                rel="noopener noreferrer"
+                ref={htbGlitch.ref}
+                className="icon-glitch"
+              >
+                <HtbIcon className="h-10 w-10 fill-white" />
+              </a>
+              <a
+                href="https://x.com/siegecmd"
+                target="_blank"
+                rel="noopener noreferrer"
+                ref={xGlitch.ref}
+                className="icon-glitch"
+              >
+                <XIcon className="h-10 w-10 fill-white" />
+              </a>
+            </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <svg
-            className="w-6 h-6 text-white/50"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+            <p className="mt-6 text-lg text-white/80 tracking-wide">
+              Security Engineer @ Cloudflare
+            </p>
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <svg
+              className="w-6 h-6 text-white/50"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </div>
         </div>
       </section>
 
@@ -339,7 +368,7 @@ export default function Home() {
         onClick={() => focusInput()}
       >
         <div className="w-full max-w-3xl">
-          <Card variant="glass" className="w-full p-6 rounded-2xl">
+          <Card variant="glass" className="w-full p-6">
             <CardHeader className="flex flex-row justify-between p-0 mb-4">
               <h2 className="text-3xl font-bold">Typing Test</h2>
               <div className="text-right">
@@ -430,7 +459,7 @@ export default function Home() {
                 spellCheck={false}
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="w-full mt-4 px-4 py-3 rounded-xl bg-black/40 border border-black/50 focus:outline-none focus:border-black/70"
+                className="w-full mt-4 px-4 py-3 bg-gray-700/50 border border-gray-600/50 focus:outline-none focus:border-gray-500/70"
               />
             </CardContent>
           </Card>
@@ -461,11 +490,7 @@ export default function Home() {
           background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
           z-index: 5;
         }
-        .icons-vignette-container {
-          padding: 2rem 3rem;
-          background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 80%);
-          border-radius: 50%;
-        }
+        
       `}</style>
     </div>
   );

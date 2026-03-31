@@ -173,10 +173,12 @@ function DitheredWaves({
   disableAnimation,
   enableMouseInteraction,
   mouseRadius,
+  onReady,
 }) {
   const mesh = useRef(null);
   const mouseRef = useRef(new THREE.Vector2());
   const { viewport, size, gl } = useThree();
+  const hasSignaledReady = useRef(false);
 
   const waveUniformsRef = useRef({
     time: new THREE.Uniform(0),
@@ -202,6 +204,12 @@ function DitheredWaves({
 
   const prevColor = useRef([...waveColor]);
   useFrame(({ clock }) => {
+    // Signal ready after first frame renders
+    if (!hasSignaledReady.current && onReady) {
+      hasSignaledReady.current = true;
+      onReady();
+    }
+
     const u = waveUniformsRef.current;
 
     if (!disableAnimation) {
@@ -275,6 +283,7 @@ export default function Dither({
   disableAnimation = false,
   enableMouseInteraction = true,
   mouseRadius = 1,
+  onReady,
 }) {
   return (
     <Canvas
@@ -307,6 +316,7 @@ export default function Dither({
         disableAnimation={disableAnimation}
         enableMouseInteraction={enableMouseInteraction}
         mouseRadius={mouseRadius}
+        onReady={onReady}
       />
     </Canvas>
   );
