@@ -59,6 +59,31 @@ async function handleApi(request, env) {
     });
   }
 
+  if (request.method === "GET" && url.pathname === "/api/fortune") {
+    const raw = await env.TYPING_WORDS.get("fortunes_v1");
+    if (!raw) return new Response("Missing fortunes_v1 in KV", { status: 500 });
+
+    let fortunes;
+    try {
+      fortunes = JSON.parse(raw.replace(/^\uFEFF/, ""));
+    } catch (e) {
+      return new Response(`Invalid KV JSON: ${e.message}`, { status: 500 });
+    }
+
+    if (!Array.isArray(fortunes) || fortunes.length === 0) {
+      return new Response("Invalid fortunes data", { status: 500 });
+    }
+
+    const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+
+    return new Response(JSON.stringify({ fortune }), {
+      headers: {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+      },
+    });
+  }
+
   return new Response("Not Found", { status: 404 });
 }
 

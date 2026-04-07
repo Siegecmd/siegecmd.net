@@ -7,9 +7,12 @@ import React, {
 } from "react";
 import ASCIIText from "../components/ASCIIText";
 import Dither from "../components/Dither";
+import FortuneCow from "../components/FortuneCow";
 import GithubIcon from "../img/github.svg?react";
 import HtbIcon from "../img/hackthebox.svg?react";
 import XIcon from "../img/x.svg?react";
+import cfBlogImg from "../img/cf-blog.png";
+import cfGithubImg from "../img/cf-github.png";
 import { useAnimation } from "../context/AnimationContext";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
@@ -75,6 +78,7 @@ export default function Home() {
   const [endedAt, setEndedAt] = useState(null);
   const inputRef = useRef(null);
   const wordsLoadedRef = useRef(false);
+  const fortuneCowRef = useRef(null);
 
   useEffect(() => {
     if (isDev) return;
@@ -208,6 +212,15 @@ export default function Home() {
     return () => clearInterval(id);
   }, [startedAt, endedAt]);
 
+  useEffect(() => {
+    if (finished && endedAt) {
+      const timer = setTimeout(() => {
+        fortuneCowRef.current?.refresh();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [finished, endedAt]);
+
   function submitWord(raw) {
     if (finished || words.length === 0) return;
     ensureStarted();
@@ -295,7 +308,7 @@ export default function Home() {
       />
       <div ref={turnstileRef} className="cf-turnstile hidden" />
 
-      <section className="relative z-10 h-screen flex flex-col items-center justify-center">
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center py-16">
         <div
           style={{ opacity: heroOpacity }}
           className="w-full flex flex-col items-center transition-opacity duration-100"
@@ -345,6 +358,55 @@ export default function Home() {
             <p className="mt-6 text-lg text-white/80 tracking-wide">
               Security Engineer @ Cloudflare
             </p>
+
+            <div className="mt-8 flex flex-col md:flex-row gap-4 w-[90vw] max-w-4xl">
+              <a
+                href="https://blog.cloudflare.com/securing-cloudflare-using-cloudflare/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 rounded-xl border border-white/20 bg-black/30 backdrop-blur-sm hover:bg-black/40 hover:border-white/30 transition-all group overflow-hidden"
+              >
+                <img
+                  src={cfBlogImg}
+                  alt="Securing Cloudflare using Cloudflare"
+                  className="w-full h-40 object-cover"
+                />
+                <div className="p-4">
+                  <div className="text-xs text-white/50 uppercase tracking-wider mb-2">
+                    Blog Post
+                  </div>
+                  <div className="text-lg font-semibold text-white group-hover:text-white/90">
+                    Securing Cloudflare using Cloudflare
+                  </div>
+                  <div className="text-sm text-white/60 mt-2">
+                    blog.cloudflare.com
+                  </div>
+                </div>
+              </a>
+              <a
+                href="https://github.com/cloudflare/cf-identity-dynamic"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 rounded-xl border border-white/20 bg-black/30 backdrop-blur-sm hover:bg-black/40 hover:border-white/30 transition-all group overflow-hidden"
+              >
+                <img
+                  src={cfGithubImg}
+                  alt="cf-identity-dynamic"
+                  className="w-full h-40 object-cover"
+                />
+                <div className="p-4">
+                  <div className="text-xs text-white/50 uppercase tracking-wider mb-2">
+                    GitHub
+                  </div>
+                  <div className="text-lg font-semibold text-white group-hover:text-white/90">
+                    cf-identity-dynamic
+                  </div>
+                  <div className="text-sm text-white/60 mt-2">
+                    cloudflare/cf-identity-dynamic
+                  </div>
+                </div>
+              </a>
+            </div>
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
@@ -463,6 +525,8 @@ export default function Home() {
               />
             </CardContent>
           </Card>
+
+          <FortuneCow ref={fortuneCowRef} />
         </div>
       </section>
 
